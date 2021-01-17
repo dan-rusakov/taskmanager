@@ -1,17 +1,27 @@
-export const createTaskTemplate = () => (
-  `<article class="card card--black">
+import {formattedDate, formattedTime} from '../utils';
+
+export const createTaskTemplate = ({description, dueDate, repeatingDays, color, isFavorite, isArchive}) => {
+  const isExpired = dueDate && new Date(dueDate) < Date.now();
+  const hasRepeatedDays = Object.values(repeatingDays).some(Boolean);
+
+  return `<article
+            class="card card--${color} ${isExpired ? `card--deadline` : ``} ${hasRepeatedDays ? `card--repeat` : ``}"
+         >
     <div class="card__form">
       <div class="card__inner">
         <div class="card__control">
           <button type="button" class="card__btn card__btn--edit">
             edit
           </button>
-          <button type="button" class="card__btn card__btn--archive">
+          <button
+            type="button"
+            class="card__btn card__btn--archive ${isArchive ? `` : `card__btn--disabled`}"
+          >
             archive
           </button>
           <button
             type="button"
-            class="card__btn card__btn--favorites card__btn--disabled"
+            class="card__btn card__btn--favorites ${isFavorite ? `` : `card__btn--disabled`}"
           >
             favorites
           </button>
@@ -24,7 +34,7 @@ export const createTaskTemplate = () => (
         </div>
 
         <div class="card__textarea-wrap">
-          <p class="card__text">Example default task with default color.</p>
+          <p class="card__text">${description}</p>
         </div>
 
         <div class="card__settings">
@@ -32,8 +42,8 @@ export const createTaskTemplate = () => (
             <div class="card__dates">
               <div class="card__date-deadline">
                 <p class="card__input-deadline-wrap">
-                  <span class="card__date">23 September</span>
-                  <span class="card__time">16:15</span>
+                  <span class="card__date">${formattedDate(dueDate)}</span>
+                  <span class="card__time">${formattedTime(dueDate)}</span>
                 </p>
               </div>
             </div>
@@ -41,5 +51,5 @@ export const createTaskTemplate = () => (
         </div>
       </div>
     </div>
-  </article>`
-);
+  </article>`;
+};
